@@ -1,0 +1,9 @@
+
+# run the program here from my own command line inside docker
+docker exec marginwatch-app /app/script.sh
+
+# cron job from EC2 container
+0 * * * * docker exec marginwatch-app /app/script.sh >> /var/log/marginwatch.log 2>&1
+
+
+
