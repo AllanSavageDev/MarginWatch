@@ -1,9 +1,36 @@
 
-# run the program here from my own command line inside docker
+ run the program here from my own command line inside docker
 docker exec marginwatch-app /app/script.sh
 
-# cron job from EC2 container
+ cron job from EC2 container
 0 * * * * docker exec marginwatch-app /app/script.sh >> /var/log/marginwatch.log 2>&1
 
 
+python main.py 2025-04-29-15-20-00-margin_futures_fops.html
+python main.py /Users/esavage/AllanSavageDev/MarginWatch/IB_margin_files/2025-04-29-16-10-12-margin_futures_fops.html
 
+
+	var us_fut_tables = ["cmecrypto", "cfecrypto", "cfe", "ecbot", "elx", "iceus", "globex", "nymex", "cme", "nybot", "nyseliffe", "cbot", "eris", "ICECRYPTO", "QBALGOIUS", "smfe"];
+	var ca_fut_tables = ["cde"];
+	var eu_fut_tables = ["belfox", "dtb", "fta", "iceeu", "iceeusoft", "idem", "ipe", "lmeotc", "matif", "meffrv", "monep", "oms", "soffex", "eurexus", "liffe", "liffe_nf", "lssf", "tom", "QBALGOIEU", "wse"];
+	var au_fut_tables = ["snfe"];
+	var hk_fut_tables = ["hkfe"];
+	var jp_fut_tables = ["osejpn", "tsej"];
+	var in_fut_tables = ["nse"];
+	var mx_fut_tables = ["mexder"];
+	var sg_fut_tables = ["sgx"];
+	var kr_fut_tables = ["kse"];
+
+
+
+
+"cmecrypto", "cfecrypto", "cfe", "ecbot", "elx", "iceus", "globex", "nymex", "cme", "nybot", "nyseliffe", "cbot", "eris", "ICECRYPTO", "QBALGOIUS", "smfe"
+	"cde"
+	"belfox", "dtb", "fta", "iceeu", "iceeusoft", "idem", "ipe", "lmeotc", "matif", "meffrv", "monep", "oms", "soffex", "eurexus", "liffe", "liffe_nf", "lssf", "tom", "QBALGOIEU", "wse"
+	"snfe"
+	"hkfe"
+	"osejpn", "tsej"
+	"nse"
+	"mexder"
+	"sgx"
+	"kse"
