@@ -8,6 +8,10 @@ file_path="$output_dir/$(date +%Y-%m-%d-%H-%M-%S)-margin_futures_fops.html"
 
 curl -o "$file_path" https://www.interactivebrokers.com/en/trading/margin-futures-fops.php || { echo "Download failed"; exit 1; }
 
-sed -i '' 's/N\/A/0/g' "$file_path"
+# mac format sed invocation
+# sed -i '' 's/N\/A/0/g' "$file_path"
+
+# gnu flavored version
+sed -i 's/N\/A/0/g' "$file_path"
 
 grep 'N/A' "$file_path"

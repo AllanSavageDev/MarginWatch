@@ -34,3 +34,29 @@ python main.py /Users/esavage/AllanSavageDev/MarginWatch/IB_margin_files/2025-04
 	"mexder"
 	"sgx"
 	"kse"
+
+
+
+
+ssh -i ~/AwsCreds/T5_Main.pem ubuntu@trader5.link
+
+ssh -i ~/AwsCreds/allan_savage_key.pem ubuntu@3.149.214.167
+ssh -i ~/AwsCreds/allan_savage_key.pem allan@3.149.214.167
+
+
+
+
+
+sudo apt install -y git docker.io docker-compose nginx 
+
+
+2025-04-30-23-45-58-margin_futures_fops.html
+docker exec marginwatch-backend python main.py IB_margin_files/<your_file_name.html>
+
+docker exec marginwatch-backend fetch_IB_margin_file.sh
+docker exec marginwatch-backend python main.py IB_margin_files/2025-04-30-23-45-58-margin_futures_fops.html
+
+
+docker exec marginwatch-backend bash fetch_IB_margin_file.sh
+docker exec marginwatch-backend ls IB_margin_files
+docker exec marginwatch-backend python main.py IB_margin_files/2025-04-30-23-45-58-margin_futures_fops.html
