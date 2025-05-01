@@ -147,10 +147,22 @@ def main():
     base_directory = config['paths']['base_directory']
 
     parser = argparse.ArgumentParser(description='Process the filename')
-    parser.add_argument('filename', type=str, help='The name of the file to process')
+    parser.add_argument('filename', type=str, nargs='?', help='The name of the file to process')
     args = parser.parse_args()
 
-    file_path = os.path.join(base_directory, args.filename)
+    if args.filename:
+        file_path = os.path.join(base_directory, args.filename)
+    else:
+        # Automatically select the latest file
+        files = [f for f in os.listdir(base_directory) if f.endswith(".html")]
+        if not files:
+            print("No margin files found.")
+            return
+        latest = max(files, key=lambda f: os.path.getctime(os.path.join(base_directory, f)))
+        file_path = os.path.join(base_directory, latest)
+        print(f"Auto-selected latest file: {latest}")
+
+    # Proceed with using file_path...
 
 #    div_ids = ["cme", "cbot", "cfe", "COMEX", "EUREX", "iceus", "nybot", "nymex", "nyseliffe"]
 

@@ -59,4 +59,9 @@ docker exec marginwatch-backend python main.py IB_margin_files/2025-04-30-23-45-
 
 docker exec marginwatch-backend bash fetch_IB_margin_file.sh
 docker exec marginwatch-backend ls IB_margin_files
-docker exec marginwatch-backend python main.py IB_margin_files/2025-04-30-23-45-58-margin_futures_fops.html
+
+2025-05-01-00-22-28-margin_futures_fops.html
+
+docker exec marginwatch-backend python main.py IB_margin_files/2025-05-01-00-22-28-margin_futures_fops.html
+
+http://3.149.214.167:8080/
