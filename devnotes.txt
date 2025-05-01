@@ -65,3 +65,42 @@ docker exec marginwatch-backend ls IB_margin_files
 docker exec marginwatch-backend python main.py IB_margin_files/2025-05-01-00-22-28-margin_futures_fops.html
 
 http://3.149.214.167:8080/
+
+
+
+
+
+
+
+
+
+
+cd ~/MarginWatch
+git pull origin main
+
+docker-compose down --volumes --remove-orphans
+docker image rm marginwatch_backend || true
+docker-compose up --build -d
+
+
+
+
+
+Deploy cycle:
+
+git add backend/config.ini
+git commit -m "Fix config path to IB_margin_files"
+git push origin main
+
+
+cd ~/MarginWatch
+git pull origin main
+
+#docker-compose down --volumes --remove-orphans
+docker-compose down --remove-orphans
+docker image rm marginwatch_backend || true
+docker-compose up --build -d
+
+
+docker exec marginwatch-backend bash fetch_IB_margin_file.sh
+docker exec marginwatch-backend python main.py

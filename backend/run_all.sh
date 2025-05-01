@@ -1,8 +1,11 @@
 #!/bin/bash
 set -e
 
-# Fetch the latest margin file
-bash /app/fetch_IB_margin_file.sh
+echo "Starting run_all.sh"
 
-# Process it into the database
-python /app/main.py
+bash /app/fetch_IB_margin_file.sh || { echo "Fetch failed"; exit 1; }
+
+echo "Fetch complete, running main.py..."
+python /app/main.py || { echo "main.py failed"; exit 1; }
+
+echo "Done"
