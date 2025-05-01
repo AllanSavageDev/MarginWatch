@@ -148,6 +148,7 @@ def main():
 
     parser = argparse.ArgumentParser(description='Process the filename')
     parser.add_argument('filename', type=str, nargs='?', help='The name of the file to process')
+    
     args = parser.parse_args()
 
     if args.filename:
