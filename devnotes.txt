@@ -111,3 +111,38 @@ docker-compose up --build -d
 
 docker exec marginwatch-backend bash fetch_IB_margin_file.sh
 docker exec marginwatch-backend python main.py
+
+
+
+
+
+
+
+
+
+
+npx create-next-app@latest frontend --typescript --tailwind --eslint --yes
+
+cd frontend
+npm install
+npm run dev
+
+
+
+
+source venv/bin/activate
+
+
+uvicorn service:app --reload --host 127.0.0.1 --port 8000
+
+
+{
+  "email": "test@marginwatch.io",
+  "password": "password",
+  "full_name": "Test Fucking User"
+}
+
+{
+  "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c2VyQGV4YW1wbGUuY29tIiwiZXhwIjoxNzQ2NDE0NzUxfQ.WCLlPxw6_b4iwPgJjxb6E1FyvDNsHTHQgodNzoXMvIg",
+  "token_type": "bearer"
+}
