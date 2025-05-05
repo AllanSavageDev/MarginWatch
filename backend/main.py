@@ -8,14 +8,11 @@ from bs4 import BeautifulSoup
 print(">>> main.py starting")
 
 
-import sys
-sys.stdout = open("/app/main.log", "a")
-sys.stderr = sys.stdout
-
 
 def get_db_connection(config):
     return psycopg2.connect(
         host=config['host'],
+        port=int(config['port']),
         user=config['user'],
         password=config['password'],
         dbname=config['database']
@@ -23,28 +20,18 @@ def get_db_connection(config):
 
 
 def main():
-    script_dir = os.path.dirname(os.path.realpath(__file__))
     
-    
-    
-    
-    config_path = os.path.join(script_dir, 'config.ini')
+    env = os.getenv('MW_ENV', 'dev')  # defaults to 'dev' if not set
+    filename = f'config.{env}.ini'
 
+    script_dir = os.path.dirname(os.path.realpath(__file__))
+    config_path = os.path.join(script_dir, filename)
     config = configparser.ConfigParser()
     config.read(config_path)
-
-    # db_config = {
-    #     'host': config['postgres']['host'],
-    #     'port': config['postgres']['port'],
-    #     'user': config['postgres']['user'],
-    #     'password': config['postgres']['password'],
-    #     'database': config['postgres']['database']
-    # }
 
     from db import load_db_config  # adjust if it's in the same file
 
     db_config = load_db_config()
-
 
     base_directory = config['paths']['base_directory']
 
@@ -114,8 +101,6 @@ def extract_table(file_path, div_id):
     return df
 
 
-
-
 def create_table(df, table_name, config):
     connection = None
     try:
@@ -132,21 +117,6 @@ def create_table(df, table_name, config):
             return
 
         print(f"\nCreating table '{table_name}'.\n")
-        # create_query = f"""
-        #     CREATE TABLE "{table_name}" (
-        #         id SERIAL PRIMARY KEY,
-        #         inserted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        # """
-
-        # for column in df.columns:
-        #     try:
-        #         df[column].astype(float)
-        #         col_type = "DOUBLE PRECISION"
-        #     except ValueError:
-        #         col_type = "VARCHAR(255)"
-        #     create_query += f'"{column}" {col_type}, '
-
-        # create_query = create_query.rstrip(', ') + ");"
 
         create_query = f"""
         CREATE TABLE public."{table_name}" (
@@ -199,7 +169,7 @@ def insert_dataframe(df, table_name, config):
         for _, row in df.iterrows():
             values = (
                 row['exchange'], row['underlying'], row['product_description'],
-                row['trading_class'], row['intraday_initial'], row['intraday_maintenance'],
+                row['trading_class'], row['intraday_initial1'], row['intraday_maintenance1'],
                 row['overnight_initial'], row['overnight_maintenance'], row['currency'],
                 row['has_options'], row['short_overnight_initial'], row['short_overnight_maintenance']
             )
@@ -217,5 +187,4 @@ def insert_dataframe(df, table_name, config):
 
 
 if __name__ == '__main__':
-    
     main()
