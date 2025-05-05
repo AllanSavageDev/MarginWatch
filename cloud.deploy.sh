@@ -7,7 +7,7 @@ git clean -fd
 git pull origin main
 
 echo "🚀 Rebuilding containers..."
-docker-compose down
-docker-compose up --build -d
+docker compose down
+docker compose up --build -d
 
 echo "✅ Deployment complete."
