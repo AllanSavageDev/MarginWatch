@@ -93,7 +93,7 @@ def insert_dataframe(df, table_name, config):
         insert_query = f"""
         INSERT INTO "{table_name}" (
             exchange, underlying, product_description, trading_class,
-            intraday_initial1, intraday_maintenance1, overnight_initial,
+            intraday_initial, intraday_maintenance, overnight_initial,
             overnight_maintenance, currency, has_options,
             short_overnight_initial, short_overnight_maintenance
         ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
@@ -102,7 +102,7 @@ def insert_dataframe(df, table_name, config):
         for _, row in df.iterrows():
             values = (
                 row['exchange'], row['underlying'], row['product_description'],
-                row['trading_class'], row['intraday_initial1'], row['intraday_maintenance1'],
+                row['trading_class'], row['intraday_initial'], row['intraday_maintenance'],
                 row['overnight_initial'], row['overnight_maintenance'], row['currency'],
                 row['has_options'], row['short_overnight_initial'], row['short_overnight_maintenance']
             )
