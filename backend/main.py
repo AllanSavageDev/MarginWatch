@@ -6,6 +6,73 @@ import psycopg2
 from bs4 import BeautifulSoup
 
 
+
+def get_db_connection(config):
+    return psycopg2.connect(
+        host=config['host'],
+        user=config['user'],
+        password=config['password'],
+        dbname=config['database']
+    )
+
+
+def main():
+    script_dir = os.path.dirname(os.path.realpath(__file__))
+    config_path = os.path.join(script_dir, 'config.ini')
+
+    config = configparser.ConfigParser()
+    config.read(config_path)
+
+    db_config = {
+        'host': config['postgres']['host'],
+        'port': config['postgres']['port'],
+        'user': config['postgres']['user'],
+        'password': config['postgres']['password'],
+        'database': config['postgres']['database']
+    }
+
+    base_directory = config['paths']['base_directory']
+
+    parser = argparse.ArgumentParser(description='Process the filename')
+    parser.add_argument('filename', type=str, nargs='?', help='The name of the file to process')
+    
+    args = parser.parse_args()
+
+    if args.filename:
+        file_path = os.path.join(base_directory, args.filename)
+    else:
+        # Automatically select the latest file
+        files = [f for f in os.listdir(base_directory) if f.endswith(".html")]
+        if not files:
+            print("No margin files found.")
+            return
+        latest = max(files, key=lambda f: os.path.getctime(os.path.join(base_directory, f)))
+        file_path = os.path.join(base_directory, latest)
+        print(f"Auto-selected latest file: {latest}")
+
+    # Proceed with using file_path...
+
+    div_ids = ["BURSAMY","CEDX","cfe","cme","COMEX","ENDEX","EUREX","fta","hkfe","iceeu","iceeusoft","iceus","idem","ipe","kse","lmeotc","matif","meffrv","mexder","monep","nse","nybot","nymex","nyseliffe","oms","osejpn","QBALGOIEU","QBALGOIUS","sgx","snfe"]
+
+    for div_id in div_ids:
+        process_import(file_path, div_id, "ib_margins", db_config)
+
+
+
+def process_import(file_path, div_id, table_name, config):
+    
+    df = extract_table(file_path, div_id)
+    
+    if df is not None:
+        print(f"Data extracted for div '{div_id}'.")
+        
+        create_table(df, table_name, config)
+        
+        insert_dataframe(df, table_name, config)
+    else:
+        print(f"No data extracted for div '{div_id}'.")
+
+
 def extract_table(file_path, div_id):
     with open(file_path, 'r', encoding='utf-8') as file:
         soup = BeautifulSoup(file, 'html.parser')
@@ -32,13 +99,6 @@ def extract_table(file_path, div_id):
     return df
 
 
-def get_db_connection(config):
-    return psycopg2.connect(
-        host=config['host'],
-        user=config['user'],
-        password=config['password'],
-        dbname=config['database']
-    )
 
 
 def create_table(df, table_name, config):
@@ -105,6 +165,7 @@ def create_table(df, table_name, config):
             connection.close()
 
 
+
 def insert_dataframe(df, table_name, config):
     connection = None
     try:
@@ -138,94 +199,6 @@ def insert_dataframe(df, table_name, config):
         if connection:
             cursor.close()
             connection.close()
-
-
-def process_import(file_path, div_id, table_name, config):
-    df = extract_table(file_path, div_id)
-    if df is not None:
-        print(f"Data extracted for div '{div_id}'.")
-        create_table(df, table_name, config)
-        insert_dataframe(df, table_name, config)
-    else:
-        print(f"No data extracted for div '{div_id}'.")
-
-
-def main():
-    script_dir = os.path.dirname(os.path.realpath(__file__))
-    config_path = os.path.join(script_dir, 'config.ini')
-
-    config = configparser.ConfigParser()
-    config.read(config_path)
-
-    db_config = {
-        'host': config['postgres']['host'],
-        'port': config['postgres']['port'],
-        'user': config['postgres']['user'],
-        'password': config['postgres']['password'],
-        'database': config['postgres']['database']
-    }
-
-    base_directory = config['paths']['base_directory']
-
-    parser = argparse.ArgumentParser(description='Process the filename')
-    parser.add_argument('filename', type=str, nargs='?', help='The name of the file to process')
-    
-    args = parser.parse_args()
-
-    if args.filename:
-        file_path = os.path.join(base_directory, args.filename)
-    else:
-        # Automatically select the latest file
-        files = [f for f in os.listdir(base_directory) if f.endswith(".html")]
-        if not files:
-            print("No margin files found.")
-            return
-        latest = max(files, key=lambda f: os.path.getctime(os.path.join(base_directory, f)))
-        file_path = os.path.join(base_directory, latest)
-        print(f"Auto-selected latest file: {latest}")
-
-    # Proceed with using file_path...
-
-#    div_ids = ["cme", "cbot", "cfe", "COMEX", "EUREX", "iceus", "nybot", "nymex", "nyseliffe"]
-
-    div_ids = [
-    "BURSAMY",
-    "CEDX",
-    "cfe",
-    "cme",
-    "COMEX",
-    "ENDEX",
-    "EUREX",
-    "fta",
-    "hkfe",
-    "iceeu",
-    "iceeusoft",
-    "iceus",
-    "idem",
-    "ipe",
-    "kse",
-    "lmeotc",
-    "matif",
-    "meffrv",
-    "mexder",
-    "monep",
-    "nse",
-    "nybot",
-    "nymex",
-    "nyseliffe",
-    "oms",
-    "osejpn",
-    "QBALGOIEU",
-    "QBALGOIUS",
-    "sgx",
-    "snfe"
-    ]
-
-
-
-
-    for div_id in div_ids:
-        process_import(file_path, div_id, "ib_margins", db_config)
 
 
 if __name__ == '__main__':
