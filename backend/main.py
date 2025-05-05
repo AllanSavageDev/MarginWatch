@@ -5,6 +5,8 @@ import pandas as pd
 import psycopg2
 from bs4 import BeautifulSoup
 
+print(">>> main.py starting")
+
 
 import sys
 sys.stdout = open("/app/main.log", "a")
@@ -22,18 +24,27 @@ def get_db_connection(config):
 
 def main():
     script_dir = os.path.dirname(os.path.realpath(__file__))
+    
+    
+    
+    
     config_path = os.path.join(script_dir, 'config.ini')
 
     config = configparser.ConfigParser()
     config.read(config_path)
 
-    db_config = {
-        'host': config['postgres']['host'],
-        'port': config['postgres']['port'],
-        'user': config['postgres']['user'],
-        'password': config['postgres']['password'],
-        'database': config['postgres']['database']
-    }
+    # db_config = {
+    #     'host': config['postgres']['host'],
+    #     'port': config['postgres']['port'],
+    #     'user': config['postgres']['user'],
+    #     'password': config['postgres']['password'],
+    #     'database': config['postgres']['database']
+    # }
+
+    from db import load_db_config  # adjust if it's in the same file
+
+    db_config = load_db_config()
+
 
     base_directory = config['paths']['base_directory']
 
@@ -206,5 +217,5 @@ def insert_dataframe(df, table_name, config):
 
 
 if __name__ == '__main__':
-    print(">>> main.py starting")
+    
     main()
