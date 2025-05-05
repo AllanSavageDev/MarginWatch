@@ -50,7 +50,8 @@ def custom_openapi():
             "type": "oauth2",
             "flows": {
                 "password": {
-                    "tokenUrl": "/login",
+                    # "tokenUrl": "/login",
+                    "tokenUrl": f"{app.root_path}/login",
                     "scopes": {}
                 }
             }
