@@ -13,11 +13,14 @@ from datetime import datetime
 from fastapi.middleware.cors import CORSMiddleware
 
 from fastapi.openapi.utils import get_openapi
+import logging
 
 
 #app = FastAPI()
 app = FastAPI(root_path="/api")
 
+logging.basicConfig(level=logging.INFO)
+logging.info(f"FastAPI root_path: {app.root_path}")
 
 app.add_middleware(
     CORSMiddleware,
