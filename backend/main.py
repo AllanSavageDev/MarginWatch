@@ -74,7 +74,7 @@ def create_table(df, table_name, config):
         # create_query = create_query.rstrip(', ') + ");"
 
         create_query = f"""
-        CREATE TABLE public.ib_margins (
+        CREATE TABLE public."{table_name}" (
             id serial4 NOT NULL,
             inserted_at timestamp DEFAULT CURRENT_TIMESTAMP NULL,
             exchange varchar(255) NULL,
