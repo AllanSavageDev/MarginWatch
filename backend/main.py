@@ -6,6 +6,10 @@ import psycopg2
 from bs4 import BeautifulSoup
 
 
+import sys
+sys.stdout = open("/app/main.log", "a")
+sys.stderr = sys.stdout
+
 
 def get_db_connection(config):
     return psycopg2.connect(
