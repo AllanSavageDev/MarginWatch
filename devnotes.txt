@@ -1,4 +1,70 @@
 
+
+# blow away local changes before a git pullgit reset --hard HEAD
+git clean -fd
+git pull
+
+
+
+# I wont need shit shit on EC2 host anymore
+sudo apt remove nodejs npm -y
+
+
+
+
+
+
+
+
+
+Prod Deploy Procedure:
+
+🔹 Step 1: Pull latest code
+cd ~/MarginWatch
+git pull
+
+🔹 Step 2: Build the frontend
+cd frontend
+npm install           # only needed after package changes
+npm run build         # uses output: 'export' in next.config.ts
+
+🔹 Step 3: Confirm static site output
+ls -l ./out           # should contain index.html, etc.
+
+
+🔹 Step 4: Nginx auto-serves it
+- ./frontend/out:/usr/share/nginx/html:ro
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
  run the program here from my own command line inside docker
 docker exec marginwatch-app /app/script.sh
 
@@ -52,6 +118,38 @@ docker exec -it marginwatch-backend bash
 # if I mount ./frontend/out for nginx it will serve my site 
 npm run build && npx next export
 
+# to build the frontend
+cd marginwatch/frontend/app
+npm install        # only needed once or when deps change
+npm run build
+
+
+
+cd frontend
+npm run build 
+
+ ⨯ 
+    `next export` has been removed in favor of 'output: export' in next.config.js.
+Learn more: https://nextjs.org/docs/app/building-your-application/deploying/static-exports
+
+#output lands in 
+frontend/out/
+
+so nginx should mount:
+- ./frontend/out:/usr/share/nginx/html:ro
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 sudo apt install -y git docker.io docker-compose nginx 
@@ -74,6 +172,10 @@ docker exec marginwatch-backend python main.py IB_margin_files/2025-05-01-00-22-
 http://3.149.214.167:8080/
 
 
+
+
+curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+sudo apt install -y nodejs
 
 
 

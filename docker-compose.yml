@@ -25,6 +25,18 @@ services:
     working_dir: /app
     tty: true
 
+  frontend:
+    build:
+      context: ./frontend
+    container_name: marginwatch-frontend
+    restart: always
+    ports:
+      - "3000:3000"  # Optional for testing from host
+    environment:
+      - NODE_ENV=production
+    depends_on:
+      - backend
+
   nginx:
     image: nginx
     container_name: marginwatch-nginx
@@ -32,7 +44,7 @@ services:
       - "80:80"
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
-      - ./frontend/out:/usr/share/nginx/html:ro
+#      - ./frontend/out:/usr/share/nginx/html:ro
     depends_on:
       - backend
 

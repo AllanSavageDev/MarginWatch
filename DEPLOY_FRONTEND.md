@@ -67,4 +67,9 @@ You are now serving the latest frontend build via Nginx.
     25e62b19b156   postgres              "docker-entrypoint.s…"   31 seconds ago   Up 30 seconds   0.0.0.0:5435->5432/tcp, :::5435->5432/tcp   marginwatch-postgres
 
 
+## if only backend changes
+    docker-compose up --build -d backend
+
+## check URL to see if its working
+    http://3.149.214.167
 
