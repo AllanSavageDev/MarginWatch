@@ -43,7 +43,14 @@ ssh -i ~/AwsCreds/T5_Main.pem ubuntu@trader5.link
 ssh -i ~/AwsCreds/allan_savage_key.pem ubuntu@3.149.214.167
 ssh -i ~/AwsCreds/allan_savage_key.pem allan@3.149.214.167
 
+docker exec -it marginwatch-backend bash
 
+
+# this runs the front end build - I do this locally from ./frontend 
+# first command will put output in ./frontend/.next ( which I need to add to git ignore )
+# second commadn will produce fully static site in ./frontend/out ( which I need to add to git ignore )
+# if I mount ./frontend/out for nginx it will serve my site 
+npm run build && npx next export
 
 
 
