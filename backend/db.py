@@ -55,6 +55,11 @@ def load_db_config():
     config = configparser.ConfigParser()
     config.read(config_path)
 
+
+    print(f"Looking for config at: {config_path}")
+    print(f"Sections loaded: {config.sections()}")
+
+
     if 'postgres' not in config:
         print(f"[ERROR] Missing [postgres] section in {config_path}")
         sys.exit(1)
