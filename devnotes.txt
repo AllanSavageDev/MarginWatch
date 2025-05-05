@@ -11,6 +11,32 @@ sudo apt remove nodejs npm -y
 
 
 
+cd ~/MarginWatch
+
+# Stop and remove containers
+docker-compose down
+
+# Remove any untracked or modified files (if you're sure!)
+git reset --hard
+git clean -fd
+
+# Pull fresh code
+git pull
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

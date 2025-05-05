@@ -13,7 +13,11 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
 
 # Make your script executable
-RUN chmod +x /app/script.sh
+# RUN chmod +x /app/script.sh
 
 # Default command does nothing — we'll trigger manually via `docker exec`
-CMD ["sleep", "infinity"]
+# CMD ["sleep", "infinity"]
+# CMD ["bash", "script.sh"]
+CMD ["uvicorn", "service:app", "--host", "0.0.0.0", "--port", "5000"]
+
+
