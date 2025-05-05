@@ -57,21 +57,42 @@ def create_table(df, table_name, config):
             return
 
         print(f"\nCreating table '{table_name}'.\n")
+        # create_query = f"""
+        #     CREATE TABLE "{table_name}" (
+        #         id SERIAL PRIMARY KEY,
+        #         inserted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        # """
+
+        # for column in df.columns:
+        #     try:
+        #         df[column].astype(float)
+        #         col_type = "DOUBLE PRECISION"
+        #     except ValueError:
+        #         col_type = "VARCHAR(255)"
+        #     create_query += f'"{column}" {col_type}, '
+
+        # create_query = create_query.rstrip(', ') + ");"
+
         create_query = f"""
-            CREATE TABLE "{table_name}" (
-                id SERIAL PRIMARY KEY,
-                inserted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        CREATE TABLE public.ib_margins (
+            id serial4 NOT NULL,
+            inserted_at timestamp DEFAULT CURRENT_TIMESTAMP NULL,
+            exchange varchar(255) NULL,
+            underlying varchar(255) NULL,
+            product_description varchar(255) NULL,
+            trading_class varchar(255) NULL,
+            intraday_initial float8 NULL,
+            intraday_maintenance float8 NULL,
+            overnight_initial float8 NULL,
+            overnight_maintenance float8 NULL,
+            currency varchar(255) NULL,
+            has_options varchar(255) NULL,
+            short_overnight_initial float8 NULL,
+            short_overnight_maintenance float8 NULL,
+            CONSTRAINT ib_margins_pkey PRIMARY KEY (id)
+        );
         """
 
-        for column in df.columns:
-            try:
-                df[column].astype(float)
-                col_type = "DOUBLE PRECISION"
-            except ValueError:
-                col_type = "VARCHAR(255)"
-            create_query += f'"{column}" {col_type}, '
-
-        create_query = create_query.rstrip(', ') + ");"
         cursor.execute(create_query)
         connection.commit()
         print(f"Table '{table_name}' created successfully.")
