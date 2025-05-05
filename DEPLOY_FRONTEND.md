@@ -49,3 +49,22 @@ This builds and updates the static frontend site served by Nginx.
 ## Done
 
 You are now serving the latest frontend build via Nginx.
+
+
+
+## rebuild the image and start the containers
+
+    /MarginWatch$ docker-compose down
+    /MarginWatch$ docker-compose up --build -d
+
+
+## See whats up after rebuild and up
+
+    allan@ip-172-31-3-128:~/MarginWatch$ docker ps
+    CONTAINER ID   IMAGE                 COMMAND                  CREATED          STATUS          PORTS                                       NAMES
+    f19ec004f7b9   nginx                 "/docker-entrypoint.…"   30 seconds ago   Up 29 seconds   0.0.0.0:80->80/tcp, :::80->80/tcp           marginwatch-nginx
+    b6f45e9d5d7b   marginwatch_backend   "sleep infinity"         30 seconds ago   Up 30 seconds                                               marginwatch-backend
+    25e62b19b156   postgres              "docker-entrypoint.s…"   31 seconds ago   Up 30 seconds   0.0.0.0:5435->5432/tcp, :::5435->5432/tcp   marginwatch-postgres
+
+
+
