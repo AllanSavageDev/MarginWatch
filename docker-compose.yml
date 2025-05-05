@@ -26,6 +26,8 @@ services:
     tty: true
     ports:
       - "5000:5000"
+    environment:
+      - MW_ENV=prod
 
   frontend:
     build:
