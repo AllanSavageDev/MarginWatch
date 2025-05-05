@@ -57,9 +57,23 @@ def custom_openapi():
             }
         }
     }
+    # for path in openapi_schema["paths"]:
+    #     for method in openapi_schema["paths"][path]:
+    #         openapi_schema["paths"][path][method]["security"] = [{"OAuth2PasswordBearer": []}]
+    # app.openapi_schema = openapi_schema
+    # return app.openapi_schema
+
+    # Rewrite all paths to include root_path
+    new_paths = {}
+    for path, methods in openapi_schema["paths"].items():
+        new_paths[f"{app.root_path}{path}"] = methods
+    openapi_schema["paths"] = new_paths
+
+    # Apply security globally
     for path in openapi_schema["paths"]:
         for method in openapi_schema["paths"][path]:
             openapi_schema["paths"][path][method]["security"] = [{"OAuth2PasswordBearer": []}]
+
     app.openapi_schema = openapi_schema
     return app.openapi_schema
 
