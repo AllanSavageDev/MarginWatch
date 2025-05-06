@@ -14,11 +14,23 @@ export default function LoginPage() {
     e.preventDefault();
     setError('');
 
-    const res = await fetch('http://127.0.0.1:8000/login_json', {
+    // const res = await fetch('http://127.0.0.1:8000/login_json', {
+    //   method: 'POST',
+    //   headers: { 'Content-Type': 'application/json' },
+    //   body: JSON.stringify({ email, password }),
+    // });
+
+    const res = await fetch('http://127.0.0.1:8000/login', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password }),
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: new URLSearchParams({
+        username: email,     // ← rename field to match FastAPI's expectation
+        password: password,
+      }),
     });
+
 
     if (res.ok) {
       const data = await res.json();

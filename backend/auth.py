@@ -29,15 +29,6 @@ class UserCreate(BaseModel):
 
 
 
-
-
-
-
-
-
-
-
-
 @router.post("/bootstrap-user")
 async def bootstrap_user():
     db_config = load_db_config()
@@ -144,26 +135,6 @@ async def create_user(user: UserCreate):
 
 
 
-class LoginRequest(BaseModel):
-    email: str
-    password: str
-
-@router.post("/login_json")
-async def login_json(request: LoginRequest):
-    db_config = load_db_config()
-    conn = await asyncpg.connect(**db_config)
-
-    try:
-        user = await conn.fetchrow("SELECT * FROM users WHERE email = $1", request.email)
-        if not user or not pwd_context.verify(request.password, user['hashed_password']):
-            raise HTTPException(status_code=401, detail="Invalid email or password")
-        
-        token_data = {"sub": user["email"]}  # You can also include user["id"] if needed
-        access_token = create_access_token(token_data)
-        return {"access_token": access_token, "token_type": "bearer"}
-    
-    finally:
-        await conn.close()        
 
 
 
@@ -202,4 +173,46 @@ def create_access_token(data: dict, expires_delta: timedelta | None = None):
     expire = datetime.utcnow() + (expires_delta or timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES))
     to_encode.update({"exp": expire})
     return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+
+
+
+
+
+
+
+
+
+# class LoginRequest(BaseModel):
+#     email: str
+#     password: str
+
+# @router.post("/login_json")
+# async def login_json(request: LoginRequest):
+#     db_config = load_db_config()
+#     conn = await asyncpg.connect(**db_config)
+
+#     try:
+#         user = await conn.fetchrow("SELECT * FROM users WHERE email = $1", request.email)
+#         if not user or not pwd_context.verify(request.password, user['hashed_password']):
+#             raise HTTPException(status_code=401, detail="Invalid email or password")
+        
+#         token_data = {"sub": user["email"]}  # You can also include user["id"] if needed
+#         access_token = create_access_token(token_data)
+#         return {"access_token": access_token, "token_type": "bearer"}
+    
+#     finally:
+#         await conn.close()        
+
+
+
+
+
+
+
+
+
+
+
+
+
 
