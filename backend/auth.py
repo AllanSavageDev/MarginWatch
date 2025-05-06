@@ -17,7 +17,7 @@ ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 300
 
 router = APIRouter()
-# pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+
 pwd_context = CryptContext(schemes=["argon2"], deprecated="auto")
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
@@ -100,6 +100,63 @@ async def bootstrap_user():
 
 
 
+@router.post("/login")
+async def login(form_data: OAuth2PasswordRequestForm = Depends()):
+    db_config = load_db_config()
+    conn = await asyncpg.connect(**db_config)
+
+    try:
+        user = await conn.fetchrow("SELECT * FROM users WHERE email = $1", form_data.username)
+        if not user or not pwd_context.verify(form_data.password, user['hashed_password']):
+            raise HTTPException(status_code=401, detail="Invalid email or password")
+
+        token_data = {"sub": user["email"]}
+        access_token = create_access_token(token_data)
+        return {"access_token": access_token, "token_type": "bearer"}
+    
+    finally:
+        await conn.close()
+
+
+
+class TokenData(BaseModel):
+    email: str | None = None
+
+
+@router.get("/me")
+async def read_users_me(token: str = Depends(oauth2_scheme)):
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        email: str = payload.get("sub")
+        if email is None:
+            raise HTTPException(status_code=401, detail="Invalid token: no subject")
+
+        token_data = TokenData(email=email)
+
+    except JWTError:
+        raise HTTPException(status_code=401, detail="Invalid token")
+
+    # Query the user by email
+    db_config = load_db_config()
+    conn = await asyncpg.connect(
+        user=db_config['user'],
+        password=db_config['password'],
+        database=db_config['database'],
+        host=db_config['host'],
+        port=int(db_config['port'])
+    )
+
+    user = await conn.fetchrow("SELECT id, email, full_name, is_active FROM users WHERE email = $1", token_data.email)
+    await conn.close()
+
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    return dict(user)
+
+
+
+
 
 @router.post("/create-user")
 async def create_user(user: UserCreate):
@@ -114,7 +171,6 @@ async def create_user(user: UserCreate):
     )
 
     try:
-        # hashed_pw = bcrypt.hashpw(user.password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
         hashed_pw = pwd_context.hash(user.password)
 
         await conn.execute(
@@ -138,22 +194,6 @@ async def create_user(user: UserCreate):
 
 
 
-@router.post("/login")
-async def login(form_data: OAuth2PasswordRequestForm = Depends()):
-    db_config = load_db_config()
-    conn = await asyncpg.connect(**db_config)
-
-    try:
-        user = await conn.fetchrow("SELECT * FROM users WHERE email = $1", form_data.username)
-        if not user or not pwd_context.verify(form_data.password, user['hashed_password']):
-            raise HTTPException(status_code=401, detail="Invalid email or password")
-
-        token_data = {"sub": user["email"]}
-        access_token = create_access_token(token_data)
-        return {"access_token": access_token, "token_type": "bearer"}
-    
-    finally:
-        await conn.close()
 
 
 

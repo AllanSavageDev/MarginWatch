@@ -83,9 +83,6 @@ app.openapi = custom_openapi
 
 
 
-@app.get("/me")
-async def read_users_me(token: str = Depends(oauth2_scheme)):
-    return {"token": token}
 
 
 
