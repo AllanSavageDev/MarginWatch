@@ -27,6 +27,43 @@ class UserCreate(BaseModel):
     password: str
     full_name: str | None = None
 
+
+
+@router.post("/bootstrap-user")
+async def bootstrap_user():
+    db_config = load_db_config()
+    conn = await asyncpg.connect(
+        user=db_config['user'],
+        password=db_config['password'],
+        database=db_config['database'],
+        host=db_config['host'],
+        port=int(db_config['port'])
+    )
+
+    user_count = await conn.fetchval("SELECT COUNT(*) FROM users")
+    if user_count > 0:
+        await conn.close()
+        raise HTTPException(status_code=403, detail="Users already exist")
+
+    hashed_pw = pwd_context.hash("admin")
+
+    await conn.execute(
+        """
+        INSERT INTO users (email, hashed_password, full_name)
+        VALUES ($1, $2, $3)
+        """,
+        "admin@example.com",
+        hashed_pw,
+        "Admin User"
+    )
+
+    await conn.close()
+    return {"msg": "bootstrap user created"}
+
+
+
+
+
 @router.post("/create-user")
 async def create_user(user: UserCreate):
     db_config = load_db_config()
