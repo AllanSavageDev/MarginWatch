@@ -53,38 +53,39 @@ async def bootstrap_user():
     )
 
     # does the user table exist?
-
-    cursor = conn.cursor()
-
-    cursor.execute("""
+    exists = await conn.fetchval(
+        """
         SELECT EXISTS (
             SELECT 1 FROM information_schema.tables 
-            WHERE table_schema = 'public' AND table_name = %s
+            WHERE table_schema = 'public' AND table_name = $1
         );
-    """, (table_name,))
+        """,
+        table_name
+    )
 
-    if cursor.fetchone()[0]:
-        print(f"\ntable '{table_name}'exists - not creating.\n")
+    if exists:
+        print(f"\ntable '{table_name}' exists - not creating.\n")
     else:
         print(f"\nCreating table '{table_name}'.\n")
 
         create_query = f"""
         CREATE TABLE public."{table_name}" (
-        id serial4 NOT NULL,
-        email text NOT NULL,
-        hashed_password text NOT NULL,
-        full_name text NULL,
-        is_active bool DEFAULT true NULL,
-        created_at timestamp DEFAULT CURRENT_TIMESTAMP NULL,
-        CONSTRAINT users_email_key UNIQUE (email),
-        CONSTRAINT users_pkey PRIMARY KEY (id)        );
+            id serial4 NOT NULL,
+            email text NOT NULL,
+            hashed_password text NOT NULL,
+            full_name text NULL,
+            is_active bool DEFAULT true NULL,
+            created_at timestamp DEFAULT CURRENT_TIMESTAMP NULL,
+            CONSTRAINT users_email_key UNIQUE (email),
+            CONSTRAINT users_pkey PRIMARY KEY (id)
+        );
         """
 
-        cursor.execute(create_query)
-        conn.commit()
+        await conn.execute(create_query)
         print(f"Table '{table_name}' created successfully.")
 
 
+    # does the bootstrap user exist?
     user_count = await conn.fetchval("SELECT COUNT(*) FROM users")
     if user_count > 0:
         await conn.close()
