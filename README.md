@@ -2,6 +2,10 @@
 
 Python-based project for monitoring and analyzing trading margin levels.
 
+Uses Interactive Brokers live publilshed data from the website of refernce.
+Writes the margin data to a postgress table for later query analysis.
+
+Full Docker system here with all necessary pieces in place with the standard docker-compose
 
 # MarginWatch Command Reference
 
