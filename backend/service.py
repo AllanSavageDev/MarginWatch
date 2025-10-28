@@ -19,6 +19,11 @@ import logging
 #app = FastAPI()
 app = FastAPI(root_path="/api")
 
+# this is to support demo.py in development - it will get removed from here as will all demo stuff once things are working correctly
+from demo import router as demo_router
+app.include_router(demo_router, prefix="/api/demo")
+
+
 logging.basicConfig(level=logging.INFO)
 logging.info(f"FastAPI root_path: {app.root_path}")
 
